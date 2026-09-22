@@ -1,6 +1,6 @@
 {
   "blockedReasons": [],
-  "manifestSha256": "a9ebef72f065ebb73b8df8d66e62ca1b5f7aae60736e4290c98a4be95774664c",
+  "manifestSha256": "f75296217b3b815dd623294fcfd7f3c2cfc744299bed4c341aeeec58ac088966",
   "ownerInputs": {
     "api_base_url": "https://review.agentonomy.xyz",
     "contact": "fengjie@alvinsclub.ai",
@@ -11,17 +11,18 @@
     "late_submission_eligibility": "Owner confirmed in conversation; no organizer written proof asserted",
     "sample_identity_sanitized": true
   },
-  "reviewCommit": "79b657e7c63158fafc657cf6370048bcde384c57",
+  "reviewCommit": "029cd0ba9aff3c25fffa33ae27f94615c1eebe2b",
   "secretFindings": [],
   "source": {
-    "fileCount": 733,
-    "totalBytes": 10506929,
+    "fileCount": 738,
+    "totalBytes": 10588079,
     "trackedChanges": []
   },
   "status": "ready",
   "deploymentVerification": {
     "status": "passed",
     "evidence": "verification/upgrade-evidence.json",
-    "publicHttpsEvidence": "verification/public-https-evidence.json"
+    "publicHttpsEvidence": "verification/public-https-evidence.json",
+    "publicDemoEvidence": "verification/public-demo-evidence.json"
   }
 }

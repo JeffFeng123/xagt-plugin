@@ -1,9 +1,9 @@
 # Test evidence for the exact review source
 
-Review source commit: `79b657e7c63158fafc657cf6370048bcde384c57`.
-[GitHub Actions run 35699277965](https://github.com/HEchooo/agentonomy-commerce/actions/runs/35699277965) completed successfully on 2026-09-22. Both the test and container-smoke jobs passed.
+Review commit: `029cd0ba9aff3c25fffa33ae27f94615c1eebe2b`.
+[GitHub Actions run 35704400429](https://github.com/HEchooo/agentonomy-commerce/actions/runs/35704400429) finished successfully on 2026-09-22. The full test job passed on attempt 2; the container-smoke job passed on attempt 1 and was retained when the test job was rerun. Both use the same unchanged source commit.
 
-| Suite | Observed result |
+| Suite | Observed CI result |
 | --- | --- |
 | Workspace | 12 passed |
 | Node | 841 passed, 1 skipped |
@@ -12,17 +12,23 @@ Review source commit: `79b657e7c63158fafc657cf6370048bcde384c57`.
 | Marketplace | 320 passed |
 | Hosted | 522 passed, 4 skipped |
 | Commerce | 4 + 6 + 6 passed |
-| Review API and HTTP transport | 32 + 18 passed |
+| Review, visitor sessions and API | 58 + 18 passed |
 | Submission package | 6 passed |
 | Solidity | 27 passed, 0 failed |
 | Go | configured packages passed |
 
-The workflow also ran doctor, the demo, Python compilation, and Docker container purchase/restart smoke verification. Counts describe suite executions, not a claim of distinct unique test cases across all targets. Skipped tests were not verified by this CI run.
+The workflow also ran doctor, application smoke checks, the demo, Python compilation and Docker purchase/restart verification. Container checks now include two isolated public visitor sessions, private API rejection, original-order replay, and public cookie-session restoration after restart. Counts describe suite executions, not distinct unique test cases across targets; skips were not verified.
 
-Public deployment evidence accompanies this file: HTTPS health/proof commit binding, rejection of unauthenticated protected calls, authenticated simulated purchase with HTTP merchant delivery, idempotent replay, container restart and VM stop/start and source-upgrade persistence. Original-version acceptance evidence is labelled under history/a5f0e4f; current-version deployment evidence is in upgrade-evidence.json. The acceptance order consumed 0.30 of the initial 1.00 sandbox USDC budget, with one settlement and one delivery retained across restart.
+## Browser and live deployment
 
-Limits: simulated settlement only; no live-chain payment or real-funds test, formal penetration test, full security audit, or legal compliance certification is claimed. Reviewer credentials still require private handoff and manual rotation.
+Fresh public HTTPS browser verification passed: no manual token or registration, start, quote, purchase, read-only reload, idempotent replay, second-visitor isolation, restoring a pending new preview alongside a prior order, HttpOnly cookie, and explicit restart of an expired browser session. Public API acceptance verifies a single 0.30 report with 0.70 remaining, one settlement and one merchant delivery. The browser additionally purchases a second edited report in a separate session to check restored-preview correctness.
 
-## Local targeted verification
+Deployment verification preserves the original private acceptance order and its 0.30/0.70 budget across VM stop/start and source upgrade. Public visitor session and purchase replay survive a container restart over HTTPS. See public-demo-evidence.json, public-https-evidence.json and upgrade-evidence.json. No credential or raw verifier state is published.
 
-The same 18-file, 67-occurrence sample-identity change passed Commerce, Node, end-to-end, Review API and submission-package targets locally, plus 14 changed Prediction Markets mock/unit smoke scripts. A separate deployment upgrade harness passed eight offline tests for saved-order replay, changed results/counters, missing IDs, original evidence preservation and safe output. The harness is deployment tooling, not part of the product CI count above.
+## Retry record and scope
+
+Attempt 1 was unusually slow and was cancelled before its pytest traceback summary became available. Its progress output contained one failure marker mapped by collection order to the existing Core nonce-allocation concurrency test. The exact first-attempt cause is unconfirmed. No Core source or tests were changed: the focused test passed ten local runs, the complete local Core/Marketplace suite passed, and the unchanged full CI test job passed on attempt 2. The initial run is not reported as passing.
+
+Local verification of the committed version also passed 76 Review tests, 2,095 Core tests, 320 Marketplace tests and application smoke checks. The first sandboxed local application run could not capture the runner process identity; rerunning with the required local process/loopback permissions passed. No checks were skipped or weakened to resolve that environment restriction.
+
+Limits: simulated settlement only; no live-chain payment, real-funds test, formal penetration test, comprehensive security audit or legal compliance certification is claimed.

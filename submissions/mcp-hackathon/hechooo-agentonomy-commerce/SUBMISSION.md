@@ -1,78 +1,62 @@
 # Agentonomy Commerce
 
-> Submission: Agentonomy has supplied its identity and support contact. The submitter authorized publication of the nonsensitive code and materials after personal sample identifiers were replaced. Public HTTPS deployment and purchase/restart verification passed.
+> Submission: Agentonomy supplied its identity and support contact and authorized publication of the nonsensitive code and materials after personal sample identifiers were replaced. Public HTTPS browser, visitor-isolation, purchase/replay and restart verification passed for the exact review commit below; see the attached evidence.
 
 ## Capability
 
-- **One-line description:** Let an Agent purchase a service within a user-authorized budget and reliably retrieve its result; this review demonstrates paid CSV reconciliation.
+- **One-line description:** Let an Agent purchase a service within a user-authorized budget and reliably retrieve its result; the review demonstrates paid CSV reconciliation.
 - **Who it helps:** Agents operating a user-authorized commerce budget.
-- **Capability boundary:** The review runtime validates identity, policy, budget, payment evidence, and merchant delivery. The merchant call is real loopback HTTP: the signed logical resource `https://merchant.agentonomy.invalid/v1/reconcile` is routed to a local `http://127.0.0.1:<port>/v1/reconcile` listener. Chain settlement is simulated, `real_funds` remains false, and no real funds are spent.
+- **Capability boundary:** Core and Marketplace validate identity, policy, budget, payment evidence, and merchant delivery. Merchant computation uses real HTTP to a loopback listener through the signed logical resource `https://merchant.agentonomy.invalid/v1/reconcile`. Settlement is simulated, `real_funds` remains false, and no real funds are spent.
 
-## Live API
+The public browser demo uses synthetic CSV input and simulated USDC only. It is a review sandbox, not a production wallet, a live-chain payment, or a formal security audit.
 
-- **API base URL:** https://review.agentonomy.xyz
-- **Health-check URL:** https://review.agentonomy.xyz/health
-- **Authentication:** Bearer token required; contact fengjie@alvinsclub.ai to arrange reviewer access through an approved private channel. No token is committed, and access handoff is pending.
-- **Rate limits / known limits:** 60 authenticated requests per minute by default; 256 KiB maximum HTTP body; 128 KiB maximum UTF-8 CSV; at most 1,000 rows including duplicates; one three-letter currency per CSV; each amount must be a two-place decimal with absolute value at most 1,000,000,000,000; 0.30 sandbox USDC per delivered report; 1.00 sandbox USDC initial budget; signed bootstrap grant valid for 30 days; previews expire after 300 seconds; result payloads are retained for 7 days; the SQLite review state and settlement journal persist across restart.
-- **API contract:** `GET /health` and `GET /.well-known/xagent-verification.json` are public. Bearer-authenticated `GET /v1/services`, `GET /v1/budget`, `POST /v1/previews` (JSON `{"offering_id":"csv-reconciliation-v1","csv_text":"..."}` plus an `Idempotency-Key` header), `POST /v1/purchases` (JSON `{"preview_id":"..."}`), and `GET /v1/purchases/{purchase_id}` are implemented in `source/`.
+## Public browser review
+
+- **Review URL:** [https://review.agentonomy.xyz](https://review.agentonomy.xyz)
+- **Entry flow:** Open the URL, click **开始演示**, lock the supplied CSV quote, and confirm the purchase. No signup, token entry, or organizer credential is required.
+- **Public routes:** `GET /demo/session` checks the current browser session; explicit `POST /demo/session` creates or restores it. The capability aliases are `/demo/v1/services`, `/demo/v1/budget`, `/demo/v1/previews`, `/demo/v1/purchases`, and `/demo/v1/purchases/{purchase_id}`.
+- **Browser credential:** The server sets an `HttpOnly`, `SameSite=Strict` cookie scoped to the browser. HTTPS deployments mark it `Secure`; it is never returned in page text or JSON.
+- **Isolation and retention:** Each browser session has an isolated persistent sandbox with a 1.00 simulated-USDC starting budget. A delivered report costs 0.30 simulated USDC. Sessions last seven days; at most 128 sessions are retained and at most 10 new sessions are created per rolling minute. Refreshing, restoring the cookie, and replaying an existing purchase reuse the same session and do not charge, reset the budget, or create a new grant.
+- **Traffic and CSRF limits:** Each visitor is limited to 60 requests per minute and public guest traffic is capped at 120 requests per minute globally. Mutating demo calls require an `Origin` exactly equal to the configured public demo origin.
+
+The private `/v1/*` API remains Bearer-authenticated for operators and automation. Its original persistent review tenant, budget, order state, and verifier path are isolated from public visitor sessions and remain available as the private baseline. Public review does not require access to that operator credential.
+
+`GET /health` and `GET /.well-known/xagent-verification.json` are public version-binding endpoints. Before review, both must identify the exact application commit below.
 
 ## Source and reproducibility
 
 - **Source repository:** https://github.com/HEchooo/agentonomy-commerce
-- **Review commit:** `79b657e7c63158fafc657cf6370048bcde384c57`
+- **Review commit:** `029cd0ba9aff3c25fffa33ae27f94615c1eebe2b`
 - **Complete review source:** `source/`
 - **Run tests:** `make PYTHON=.venv/bin/python test-commerce test-review test-submission`
 - **Run locally:** `make PYTHON=.venv/bin/python demo` (simulated settlement only)
-- **Deploy:** See [deployment instructions](source/docs/deployment.md). The independent GCP deployment is live at https://review.agentonomy.xyz; see verification evidence below.
-- **Version binding:** The deployed health endpoint and `/.well-known/xagent-verification.json` must expose this exact commit before review.
+- **Deploy:** See [deployment instructions](source/docs/deployment.md). Configure the exact HTTPS origin in `AGENTONOMY_DEMO_ORIGIN` before exposing the browser demo.
+- **Version binding:** The health and proof endpoints must expose this exact commit before any deployment result is treated as evidence.
 
-The public API was checked and exposes:
-
-```json
-// GET https://review.agentonomy.xyz/health
-{"status":"ok","commit":"79b657e7c63158fafc657cf6370048bcde384c57"}
-```
-```json
-// GET https://review.agentonomy.xyz/.well-known/xagent-verification.json
-{"schemaVersion":1,"slug":"hechooo-agentonomy-commerce","commit":"79b657e7c63158fafc657cf6370048bcde384c57"}
-```
+The local and public review flows keep the merchant transport and settlement semantics explicit: the merchant request is real HTTP to a loopback service, while settlement and all USDC accounting are simulated. No production wallet, private key, customer data, or live-chain transaction is part of this submission.
 
 ## Source integrity and historical metadata
 
-The authoritative review snapshot is the outer `source-manifest.json` and `source-manifest.sha256`: all 733 files match the declared review commit. `source/docs/source-manifest.json` is an inherited **historical Clink working-tree export**, not the manifest for this review version. Its 678 entries predate later changes (36 recorded hashes differ and 55 current files are absent). It is preserved as part of the exact source commit and must not be used to validate this submission. The outer manifest covers the current complete snapshot.
+The authoritative snapshot is the outer `source-manifest.json` together with `source-manifest.sha256`, bound to the review commit above. `source/docs/source-manifest.json` is inherited historical Clink working-tree metadata; it is preserved in the source export but does not describe or validate this review snapshot. Use the outer manifest for submission validation and do not infer current file coverage from the inherited file.
 
 ## Verification
 
-Repeatable health, quote, purchase, read, replay, and safe-failure calls are
-documented in `verification/README.md`. Original purchase/delivery acceptance passed at the prior commit. Current-source public health/proof, original-order replay after a VM stop/start and source upgrade, container restart and authenticated HTTPS replay have passed; see `verification/upgrade-evidence.json`. Review access still needs a private handoff. The checked verifier is
-`source/scripts/verify_review_api.py`:
+The primary review is the public browser flow described in `verification/README.md`. That document also describes the standard-library helper `source/scripts/verify_public_demo.py`, which uses a private `--state-file` outside the source tree and `--resume` to restore the same cookie-backed session after a restart without issuing a new charge. The helper requires no credentials and never prints the cookie credential.
 
-```bash
-BASE_URL='https://review.agentonomy.xyz'
-export AGENTONOMY_API_TOKEN='<review-token>'
-.venv/bin/python source/scripts/verify_review_api.py \
-  --base-url "$BASE_URL" \
-  --expected-commit "79b657e7c63158fafc657cf6370048bcde384c57" \
-  --purchase-id "$PURCHASE_ID" \
-  --preview-id "$PREVIEW_ID"
-```
+The current evidence artifacts are `verification/public-demo-evidence.json`, `verification/upgrade-evidence.json`, and `verification/TEST_RESULTS.md`. They are the records to inspect for the exact deployment, browser, restart, and test status for this commit; the current artifacts record successful public deployment and browser/restart verification.
 
-Use IDs returned by the walkthrough or provided through the private review handoff. Running the verifier without IDs is only appropriate for a fresh local sandbox, because it checks a new 0.30 charge. The live sandbox already contains the deployment acceptance purchase.
-
-- **Health-check result:** PASS over public HTTPS, exact commit match; see `verification/public-https-evidence.json`.
-- **Capability call:** PASS: synthetic CSV produces two unique transactions, duplicate `t1`, USD net `27.50`; used budget 0.30, remaining 0.70, one settlement and one delivery. VM stop/start and source upgrade, container restart and authenticated HTTPS replay preserved the same order and counters; see `verification/upgrade-evidence.json`.
-- **Expected error behavior:** Invalid authentication, malformed input, limits, expired authorization, and unavailable merchant fail closed without retrying a settled payment.
+The API verifier sample should show two unique transactions, duplicate ID `t1` (the browser sample uses `demo-001`), and a USD net total of `27.50` from the supplied synthetic CSV. A replay should return the same result and leave the visitor budget at 0.30 used, 0.70 remaining, one settlement submission, and one merchant delivery. A second browser session must have its own 1.00 budget and must not read the first session’s order or preview.
 
 ## Security and data handling
 
-- **Data collected:** Review purchase inputs, bounded CSV contents, authorization state, and redacted result metadata.
-- **Purpose and retention:** Preview/input records expire after 300 seconds; delivered result payloads are retained for 7 days; persistent SQLite review state and the simulated settlement journal survive restart. Credentials and raw secrets are not logged.
-- **Third parties / outbound network calls:** The merchant uses an internal logical `.invalid` resource routed to a fixed loopback HTTP listener. Core and Marketplace run in the local composition; tests make no production outbound calls.
-- **Secrets:** No secrets are committed. Review access is supplied only through an approved private channel when required.
-- **Known risks / restrictions:** Settlement is explicitly simulated and is not evidence of a live blockchain transaction. The deployed sandbox is shared and budget-limited. API credentials currently require manual rotation; the 30-day spending grant is separate from token expiry. Reviewer access has not yet been handed off. No formal security audit or real-funds test is claimed.
+- **Data collected:** Bounded synthetic CSV input, public-session authorization state, purchase state, and redacted result metadata.
+- **Purpose and retention:** Preview/input records expire after five minutes; delivered results and visitor sessions expire after seven days; expired visitor state is removed during subsequent session creation. Session credentials are hashed in the server ledger; they are delivered only as HttpOnly cookies and never logged or exposed in page text or JSON.
+- **Third parties / outbound network calls:** The merchant is an internal logical `.invalid` resource routed to a fixed loopback HTTP listener. Core and Marketplace run in the local composition; review tests do not call production services.
+- **Secrets:** No credentials, private keys, wallet material, or runtime deployment configuration are committed. Public browser review needs no credential handoff from the organizer.
+- **Known limits:** Public visitor budgets and request limits are deliberately bounded. Settlement is simulated and is not evidence of a live blockchain transaction. This submission makes no formal security-audit or real-funds claim.
 
 ## Support
 
 - **Team / builder:** Agentonomy
 - **Contact:** fengjie@alvinsclub.ai
-- **License / rights:** See [RIGHTS.md](RIGHTS.md); the declaration applies to this sanitized submission. Third-party terms remain applicable; no blanket relicensing is asserted.
+- **License / rights:** See [RIGHTS.md](RIGHTS.md); the declaration applies to this sanitized submission. Third-party terms remain applicable and no blanket relicensing is asserted.

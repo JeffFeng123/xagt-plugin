@@ -1,26 +1,61 @@
 {
   "passed": true,
-  "checked_at": "2026-09-22T07:36:15.928648+00:00",
-  "method": "Graceful stop/start of the dedicated review VM, source upgrade, persisted original order replay before and after container restart, and authenticated domain HTTPS replay. No new order or budget reset.",
-  "source_commit": "79b657e7c63158fafc657cf6370048bcde384c57",
+  "checked_at": "2026-09-22T08:32:02.823071+00:00",
+  "method": "Dedicated review VM graceful stop/start and source upgrade; original private order replay unchanged; isolated public visitor purchase and replay before/after container restart over HTTPS.",
+  "source_commit": "029cd0ba9aff3c25fffa33ae27f94615c1eebe2b",
+  "previous_commit": "79b657e7c63158fafc657cf6370048bcde384c57",
   "original_commit": "a5f0e4ffd5f5fb69323227cf85435c30dc6177f7",
-  "boot_id_before": "4f802e25-cbe5-4010-b05a-0cd83c8bb997",
-  "boot_id_after": "807dfa4d-0879-46b0-938f-8afe4d31dd80",
-  "image_id": "sha256:ee172f1fc68cce006a03a81ac4cd8ddbedb61d03a735d9bcb832c37dae177b9e",
+  "boot_id_before": "807dfa4d-0879-46b0-938f-8afe4d31dd80",
+  "boot_id_after": "e1976e1a-f8a5-446f-a140-a42f5d470309",
+  "image_id": "sha256:2cb37aa24d36440daa742d7b7d1e35f5954c49b7bca811d79d468057d141c080",
   "same_purchase": true,
-  "budget_before": {
-    "after_used_amount_usdc": "0.30",
-    "before_used_amount_usdc": "0.30",
-    "merchant_deliveries": 1,
-    "remaining_amount_usdc": "0.70",
-    "settlement_submissions": 1
-  },
-  "budget_after": {
+  "private_budget_before": {
     "before_used_amount_usdc": "0.30",
     "after_used_amount_usdc": "0.30",
     "remaining_amount_usdc": "0.70",
     "settlement_submissions": 1,
     "merchant_deliveries": 1
+  },
+  "private_budget_after": {
+    "before_used_amount_usdc": "0.30",
+    "after_used_amount_usdc": "0.30",
+    "remaining_amount_usdc": "0.70",
+    "settlement_submissions": 1,
+    "merchant_deliveries": 1
+  },
+  "public_demo": {
+    "before_restart": {
+      "status": "passed",
+      "commit": "029cd0ba9aff3c25fffa33ae27f94615c1eebe2b",
+      "real_funds": false,
+      "public_browser_session": true,
+      "manual_token_required": false,
+      "session_restored": false,
+      "cross_visitor_isolation_checked": true,
+      "same_purchase_on_replay": true,
+      "budget": {
+        "used_amount_usdc": "0.30",
+        "remaining_amount_usdc": "0.70",
+        "settlement_submissions": 1,
+        "merchant_deliveries": 1
+      }
+    },
+    "after_restart": {
+      "status": "passed",
+      "commit": "029cd0ba9aff3c25fffa33ae27f94615c1eebe2b",
+      "real_funds": false,
+      "public_browser_session": true,
+      "manual_token_required": false,
+      "session_restored": true,
+      "cross_visitor_isolation_checked": false,
+      "same_purchase_on_replay": true,
+      "budget": {
+        "used_amount_usdc": "0.30",
+        "remaining_amount_usdc": "0.70",
+        "settlement_submissions": 1,
+        "merchant_deliveries": 1
+      }
+    }
   },
   "real_funds": false,
   "settlement_mode": "simulated",

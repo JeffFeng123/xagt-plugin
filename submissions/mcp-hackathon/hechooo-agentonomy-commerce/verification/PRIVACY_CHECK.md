@@ -1,7 +1,9 @@
-# Source privacy checks
+# Current-source privacy and integrity checks
 
-The current submission includes 733 source files exported from the exact Git commit in submission.json. The application change replaced 67 occurrences of a personal sample identifier across 18 files with `telegram_demo_user`. A byte-level comparison verified that the source change consists only of those literal replacements.
+Review commit: `029cd0ba9aff3c25fffa33ae27f94615c1eebe2b`.
 
-Targeted scans of the tracked source and final submission artifact found no confirmed live credentials, private key material, customer records, personal workstation paths or private production connection configurations. Test fixtures, documented example endpoints and public chain addresses were reviewed separately from actual runtime material. Runtime state, private deployment configuration and credentials are excluded from the package.
+All 738 exported source files were checked against the exact committed snapshot by SHA-256, byte size and complete path set. The outer manifest is authoritative. The official baseline secret scanner and export preflight reported no secret findings. A targeted scan of the whole current submission found no occurrences of the former personal sample identifier; generic `telegram_demo_user` fixtures remain.
 
-This is a targeted current-snapshot check, not a history rewrite or comprehensive security audit. It does not claim that prior Git commits were deleted. The support email in the outer submission was explicitly supplied for public contact.
+New public-demo credentials are generated at runtime, stored only as hashes in the session ledger, and delivered through HttpOnly cookies. The browser stores only noncredential session/order identifiers. Runtime databases, cookie jars, verifier private state files, deployment environment files, private API tokens, and company deployment settings are excluded. Checked deployment evidence is projected to source version, boolean results, simulated budget/counters and public status.
+
+A focused code review covered authentication separation, CSRF, visitor isolation, worker lifecycle, and verifier recovery. Two recovery issues were fixed and rechecked. This is a targeted snapshot review, not a history rewrite or comprehensive security certification. Public contact information was supplied by the owner.
